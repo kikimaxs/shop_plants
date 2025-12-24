@@ -36,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _currentLatLng;
   bool _locLoading = false;
   String? _locError;
+  final ScrollController _shopScrollController = ScrollController();
+  double _shopScrollValue = 0.0;
   final List<Item> _newServices = List.generate(
     6,
     (i) => Item(
@@ -73,6 +75,20 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _initLocation();
     _loadTrending();
+    _shopScrollController.addListener(() {
+      if (!_shopScrollController.hasClients) return;
+      final max = _shopScrollController.position.maxScrollExtent;
+      final off = _shopScrollController.offset.clamp(0.0, max);
+      setState(() {
+        _shopScrollValue = max > 0 ? (off / max) : 0.0;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _shopScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _initLocation() async {
@@ -122,127 +138,163 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeader() {
     return Container(
       color: _green,
-      padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'LOGO',
-            style: const TextStyle(
-              fontSize: 36,
+            style: TextStyle(
+              fontSize: 48,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'NEXT APPOINTMENT',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withValues(alpha: .8),
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
           Row(
             children: [
-              _roundedIcon('lib/assets/images/Icon - Calender.png'),
-              const SizedBox(width: 8),
-              Text(
-                '14 Oct 2020',
-                style: TextStyle(color: Colors.white.withValues(alpha: .9)),
-              ),
-              const SizedBox(width: 16),
-              _roundedIcon('lib/assets/images/Icon - Clock.png'),
-              const SizedBox(width: 8),
-              Text(
-                '12:30 PM',
-                style: TextStyle(color: Colors.white.withValues(alpha: .9)),
-              ),
-              const SizedBox(width: 16),
-              _roundedIcon('lib/assets/images/Icon - Location.png'),
-              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  '123 Plant Street, 1/1 ...',
-                  style: TextStyle(color: Colors.white.withValues(alpha: .9)),
-                  overflow: TextOverflow.ellipsis,
+                child: Container(
+                  height: 1,
+                  color: Colors.white.withValues(alpha: .5),
                 ),
               ),
-              const SizedBox(width: 8),
-              _circleButton('lib/assets/images/Icon -Arrow.png'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'NEXT APPOINTMENT',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: Colors.white.withValues(alpha: .5),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: _infoCard('CREDIT', 'RM100.00')),
-              const SizedBox(width: 12),
-              Expanded(child: _infoCard('POINTS', '10')),
-              const SizedBox(width: 12),
-              Expanded(child: _infoCard('PACKAGE', '1')),
+              Image.asset(
+                'lib/assets/images/Icon - Calender.png',
+                width: 16,
+                height: 16,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '14 Oct 2020',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: .9),
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Image.asset(
+                'lib/assets/images/Icon -Clock.png',
+                width: 16,
+                height: 16,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '12:30 PM',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: .9),
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Image.asset(
+                'lib/assets/images/Icon - Location.png',
+                width: 16,
+                height: 16,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '123 Plant Street, 1/1 ...',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: .9),
+                    fontSize: 13,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: .2),
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'lib/assets/images/Icon -Arrow.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _roundedIcon(String path) {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Image.asset(path, fit: BoxFit.contain),
-      ),
-    );
-  }
-
-  Widget _circleButton(String path) {
-    return Container(
-      width: 28,
-      height: 28,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .15),
-        shape: BoxShape.circle,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Image.asset(path, fit: BoxFit.contain),
-      ),
-    );
-  }
-
-  Widget _infoCard(String title, String value) {
-    return Container(
-      height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: TextStyle(color: _green.withValues(alpha: .8), fontSize: 12),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: _green,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+          const SizedBox(height: 24),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              children: [
+                Expanded(child: _statItem('CREDIT', 'RM100.00')),
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: Colors.grey.withValues(alpha: .3),
+                ),
+                Expanded(child: _statItem('POINTS', '10')),
+                Container(
+                  width: 1,
+                  height: 32,
+                  color: Colors.grey.withValues(alpha: .3),
+                ),
+                Expanded(child: _statItem('PACKAGE', '1')),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _statItem(String title, String value) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: _green,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: _green,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -308,7 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'lib/assets/images/Button - Icon 5.png',
     ];
     return SizedBox(
-      height: 90,
+      height: 120,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -316,8 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
         separatorBuilder: (context, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           return Container(
-            width: 64,
-            height: 64,
+            width: 84,
+            height: 84,
             decoration: BoxDecoration(
               color: const Color(0xFFF2F4F3),
               shape: BoxShape.circle,
@@ -333,46 +385,49 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildNewServices() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'NEW SERVICES',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      'Recommended based on your preference',
-                      style: TextStyle(
-                        color: Colors.black.withValues(alpha: .5),
+    return Container(
+      color: const Color(0xFFF4F4F4),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'NEW SERVICES',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Recommended based on your preference',
+                        style: TextStyle(
+                          color: Colors.black.withValues(alpha: .5),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Text('View All', style: TextStyle(color: _green)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 220,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _newServices.length,
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              separatorBuilder: (context, _) => const SizedBox(width: 12),
-              itemBuilder: (context, index) =>
-                  _serviceCard(_newServices[index]),
+                Text('View All', style: TextStyle(color: _green)),
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 220,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _newServices.length,
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                separatorBuilder: (context, _) => const SizedBox(width: 12),
+                itemBuilder: (context, index) =>
+                    _serviceCard(_newServices[index]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -401,11 +456,14 @@ class _HomeScreenState extends State<HomeScreen> {
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            child: Image.asset(
-              item.imagePath,
-              height: 120,
-              width: 160,
-              fit: BoxFit.cover,
+            child: Container(
+              color: const Color(0xFFF4F4F4),
+              child: Image.asset(
+                item.imagePath,
+                height: 120,
+                width: 160,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -427,7 +485,10 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               item.price,
-              style: TextStyle(color: _green, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -443,60 +504,164 @@ class _HomeScreenState extends State<HomeScreen> {
       'lib/assets/images/Shop Plants - Icon 4.png',
       'lib/assets/images/Shop Plants - Icon 5.png',
     ];
-    return Padding(
+    return Container(
       padding: const EdgeInsets.only(top: 16),
+      color: const Color(0xFFF4F4F4),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Expanded(
-                  child: Image.asset(
-                    'lib/assets/images/Shop Plants - Icon Main.png',
-                    height: 60,
-                    fit: BoxFit.contain,
+                SizedBox(
+                  width: 100,
+                  child: Container(
+                    height: 104,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [Color(0xFFF4F4F4), Color(0xFFF4F4F4)],
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Image.asset(
+                        'lib/assets/images/Shop Plants - Icon Main.png',
+                        height: 104,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 94,
+                    child: Stack(
+                      children: [
+                        ListView.separated(
+                          controller: _shopScrollController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: icons.length,
+                          separatorBuilder: (context, _) =>
+                              const SizedBox(width: 2),
+                          itemBuilder: (context, index) => Container(
+                            width: 94,
+                            height: 94,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              child: Image.asset(icons[index]),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: IgnorePointer(
+                            child: Container(
+                              width: 24,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    const Color(0xFFF4F4F4),
+                                    const Color(
+                                      0xFFF4F4F4,
+                                    ).withValues(alpha: .0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: IgnorePointer(
+                            child: Container(
+                              width: 24,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerRight,
+                                  end: Alignment.centerLeft,
+                                  colors: [
+                                    const Color(0xFFF4F4F4),
+                                    const Color(
+                                      0xFFF4F4F4,
+                                    ).withValues(alpha: .0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 78,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              scrollDirection: Axis.horizontal,
-              itemCount: icons.length,
-              separatorBuilder: (context, _) => const SizedBox(width: 12),
-              itemBuilder: (context, index) => Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF2F4F3),
-                  shape: BoxShape.circle,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Image.asset(icons[index]),
-                ),
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: const EdgeInsets.only(top: 8),
-                height: 4,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: _green,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final double trackWidth = constraints.maxWidth;
+                final double knobWidth = 40;
+                return GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    final double newPosition =
+                        (_shopScrollValue * trackWidth) + details.delta.dx;
+                    final double newScrollValue = (newPosition / trackWidth)
+                        .clamp(0.0, 1.0);
+                    setState(() {
+                      _shopScrollValue = newScrollValue;
+                    });
+                    if (_shopScrollController.hasClients) {
+                      final double max =
+                          _shopScrollController.position.maxScrollExtent;
+                      _shopScrollController.jumpTo(newScrollValue * max);
+                    }
+                  },
+                  child: SizedBox(
+                    height: 20,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Center(
+                            child: Container(height: 2, color: _green),
+                          ),
+                        ),
+                        Positioned(
+                          left: _shopScrollValue * (trackWidth - knobWidth),
+                          top: 6,
+                          child: Container(
+                            width: knobWidth,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _green,
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: .12),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -627,22 +792,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        const SizedBox(height: 4),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        const SizedBox(height: 8),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              'lib/assets/images/Icon - Location.png',
-              width: 16,
-              height: 16,
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Image.asset(
+                'lib/assets/images/Icon - Location.png',
+                width: 16,
+                height: 16,
+              ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Expanded(
-              child: Text(address, style: TextStyle(color: _green)),
+              child: Text(
+                address,
+                style: const TextStyle(
+                  color: Color(0xFF4C9DA6),
+                  decoration: TextDecoration.underline,
+                  decorationColor: Color(0xFF4C9DA6),
+                  height: 1.3,
+                ),
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Row(
           children: [
             Image.asset(
@@ -650,8 +830,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 16,
               height: 16,
             ),
-            const SizedBox(width: 8),
-            Text(hours),
+            const SizedBox(width: 12),
+            Text(hours, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ],
@@ -661,6 +841,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 Widget bottomBar(BuildContext context, int currentIndex) {
   return Container(
+    height: 70,
     decoration: BoxDecoration(
       color: Colors.white,
       boxShadow: [
@@ -668,53 +849,56 @@ Widget bottomBar(BuildContext context, int currentIndex) {
       ],
     ),
     child: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _navItem(
-              context,
-              0,
-              currentIndex,
-              'lib/assets/images/Nav Icon - Home.png',
-              'lib/assets/images/Nav Icon - Home Green.png',
-              '/home',
-            ),
-            _navItem(
-              context,
-              1,
-              currentIndex,
-              'lib/assets/images/Nav Icon - Mall.png',
-              'lib/assets/images/Nav Icon - Mall Green.png',
-              '/mall',
-            ),
-            _navItem(
-              context,
-              2,
-              currentIndex,
-              'lib/assets/images/Nav Icon - Discover.png',
-              'lib/assets/images/Nav Icon - Discover.png',
-              '/discover',
-            ),
-            _navItem(
-              context,
-              3,
-              currentIndex,
-              'lib/assets/images/Nav Icon - Inbox.png',
-              'lib/assets/images/Nav Icon - Inbox.png',
-              '/inbox',
-            ),
-            _navItem(
-              context,
-              4,
-              currentIndex,
-              'lib/assets/images/Nav Icon - Account.png',
-              'lib/assets/images/Nav Icon - Account.png',
-              '/account',
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _navItem(
+            context,
+            0,
+            currentIndex,
+            'lib/assets/images/Nav Icon - Home.png',
+            'lib/assets/images/Nav Icon - Home Green.png',
+            '/home',
+            'HOME',
+          ),
+          _navItem(
+            context,
+            1,
+            currentIndex,
+            'lib/assets/images/Nav Icon - Mall.png',
+            'lib/assets/images/Nav Icon - Mall Green.png',
+            '/mall',
+            'MALL',
+          ),
+          _navItem(
+            context,
+            2,
+            currentIndex,
+            'lib/assets/images/Nav Icon - Discover.png',
+            'lib/assets/images/Nav Icon - Discover.png',
+            '/discover',
+            'DISCOVER',
+          ),
+          _navItem(
+            context,
+            3,
+            currentIndex,
+            'lib/assets/images/Nav Icon - Inbox.png',
+            'lib/assets/images/Nav Icon - Inbox.png',
+            '/inbox',
+            'INBOX',
+          ),
+          _navItem(
+            context,
+            4,
+            currentIndex,
+            'lib/assets/images/Nav Icon - Account.png',
+            'lib/assets/images/Nav Icon - Account.png',
+            '/account',
+            'ACCOUNT',
+          ),
+        ],
       ),
     ),
   );
@@ -727,26 +911,46 @@ Widget _navItem(
   String normalPath,
   String activePath,
   String route,
+  String label,
 ) {
   final bool active = currentIndex == index;
-  return GestureDetector(
-    onTap: () {
-      if (!active) {
-        Navigator.pushReplacementNamed(context, route);
-      }
-    },
-    child: Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: active ? const Color(0xFFE9F2EE) : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Image.asset(
-          active ? activePath : normalPath,
-          width: 26,
-          height: 26,
+  final Color activeColor = const Color(0xFF164A3A);
+  final Color inactiveColor = Colors.grey.withValues(alpha: .6);
+
+  return Expanded(
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        if (!active) {
+          Navigator.pushReplacementNamed(context, route);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          border: active
+              ? Border(bottom: BorderSide(color: activeColor, width: 3))
+              : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              active ? activePath : normalPath,
+              width: 24,
+              height: 24,
+              color: active ? null : inactiveColor,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: active ? activeColor : inactiveColor,
+                letterSpacing: 1.0,
+              ),
+            ),
+          ],
         ),
       ),
     ),
