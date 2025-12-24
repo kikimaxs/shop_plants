@@ -10,6 +10,17 @@ class MallScreen extends StatefulWidget {
 
 class _MallScreenState extends State<MallScreen> {
   final TextEditingController _searchController = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _hasText = _searchController.text.isNotEmpty;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -62,6 +73,19 @@ class _MallScreenState extends State<MallScreen> {
                     textAlignVertical: TextAlignVertical.center,
                   ),
                 ),
+                if (_hasText) ...[
+                  GestureDetector(
+                    onTap: () {
+                      _searchController.clear();
+                    },
+                    child: const Icon(
+                      Icons.cancel,
+                      color: Colors.grey,
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 Image.asset(
                   'lib/assets/images/Icon - Filter.png',
                   width: 20,
