@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit",
+    "price": "RM 12.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit, Lorem ipsum dolor sit amet",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  },
+  {
+    "title": "Lorem Ipsum",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore",
+    "price": "RM 10.00",
+    "imagePath": "lib/assets/images/Image.jpg"
+  }
+]

@@ -15,6 +15,14 @@ class Item {
     required this.price,
     required this.imagePath,
   });
+  factory Item.fromJson(Map<String, dynamic> json) {
+    return Item(
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      price: json['price'] ?? '',
+      imagePath: json['imagePath'] ?? '',
+    );
+  }
 }
 
 class HomeScreen extends StatefulWidget {
@@ -37,15 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       imagePath: 'lib/assets/images/Image.jpg',
     ),
   );
-  final List<Item> _trending = List.generate(
-    8,
-    (i) => Item(
-      title: 'Lorem Ipsum',
-      description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit',
-      price: 'RM 10.00',
-      imagePath: 'lib/assets/images/Image.jpg',
-    ),
-  );
+  List<Item> _trending = [];
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initLocation();
+    _loadTrending();
   }
 
   Future<void> _initLocation() async {
@@ -107,6 +108,15 @@ class _HomeScreenState extends State<HomeScreen> {
         _locLoading = false;
       });
     }
+  }
+
+  Future<void> _loadTrending() async {
+    try {
+      final items = await TrendingData.load();
+      setState(() {
+        _trending = items;
+      });
+    } catch (_) {}
   }
 
   Widget _buildHeader() {

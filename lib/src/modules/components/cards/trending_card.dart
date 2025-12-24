@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../home/screens/home_screen.dart' show Item;
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class TrendingCard extends StatelessWidget {
   final Item item;
@@ -8,7 +10,8 @@ class TrendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double imageHeight = tall ? 160 : 120;
+    final double imageHeight = 160;
+    final double cardHeight = tall ? 10 : 8;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -30,12 +33,7 @@ class TrendingCard extends StatelessWidget {
               alignment: Alignment.center,
             ),
           ),
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Text('Lorem Ipsum', style: TextStyle(fontSize: 12)),
-          ),
-          const SizedBox(height: 4),
+          SizedBox(height: cardHeight),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Text(item.description),
@@ -43,5 +41,23 @@ class TrendingCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class TrendingData {
+  static Future<List<Item>> load() async {
+    final String data = await rootBundle.loadString(
+      'lib/assets/data/trending.json',
+    );
+    final List<dynamic> list = json.decode(data);
+    return list.map((e) {
+      final m = e as Map<String, dynamic>;
+      return Item(
+        title: m['title'] ?? '',
+        description: m['description'] ?? '',
+        price: m['price'] ?? '',
+        imagePath: m['imagePath'] ?? '',
+      );
+    }).toList();
   }
 }
