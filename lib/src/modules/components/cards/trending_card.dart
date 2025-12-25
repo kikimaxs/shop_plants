@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../home/screens/home_screen.dart' show Item;
+import '../../../data/models/item.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 

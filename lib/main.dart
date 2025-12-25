@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'src/modules/home/screens/home_screen.dart';
 import 'src/modules/mall/screens/mall_screen.dart';
+import 'src/modules/shop/screens/shop_screen.dart';
+import 'src/modules/services/screens/services_screen.dart';
+import 'src/modules/discover/screens/discover_screen.dart';
+import 'src/modules/inbox/screens/inbox_screen.dart';
+import 'src/modules/account/screens/account_screen.dart';
+import 'src/modules/posts/screens/posts_screen.dart';
 
 void main() {
   runApp(const MyApp());
